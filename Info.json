@@ -1,0 +1,8 @@
+{
+  "Id": "Sucrose",
+  "DisplayName": "Sucrose",
+  "Author": "Cywohoy",
+  "Version": "0.1",
+  "AssemblyName": "Sucrose.dll",
+  "EntryMethod": "Sucrose.Main.Load"
+}
