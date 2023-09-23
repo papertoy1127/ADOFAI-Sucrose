@@ -15,7 +15,7 @@ public class CustomTileEvent : CustomEventWrapperBase, IFloorUpdateHandler {
     [EventIcon] public static Sprite GetIcon() => Main.customTileEventIcon;
     private const float TOLERANCE = 0.0001f;
 
-    public int startFloor => levelEvent.floor;
+    public int startFloor => levelEvent?.floor ?? -1;
     public int endFloor;
 
     public override void OnAddEvent(int floorId) {
@@ -33,7 +33,7 @@ public class CustomTileEvent : CustomEventWrapperBase, IFloorUpdateHandler {
         FindEndFloor();
         DeleteDecos();
         GenerateDecos();
-        editor.UpdateDecorationObjects();
+        if (!IsCutOrRemoved) editor.UpdateDecorationObjects();
     }
 
     public void DeleteDecos() {
@@ -43,11 +43,17 @@ public class CustomTileEvent : CustomEventWrapperBase, IFloorUpdateHandler {
     }
 
     public void FindEndFloor() {
+        if (IsCutOrRemoved) {
+            endFloor = -1;
+            return;
+        }
         var evts = editor.events.Where(e => e.floor > startFloor && e.eventType is LevelEventType.ColorTrack).ToArray();
         endFloor = evts.Any() ? evts.Min(e => e.floor) : editor.floors.Count;
     }
 
     public void GenerateDecos() {
+        if (IsCutOrRemoved) return;
+        
         for (var i = startFloor; i < endFloor; i++) {
             var this_tile = editor.floors[i];
             bool isCW = true;
@@ -64,6 +70,7 @@ public class CustomTileEvent : CustomEventWrapperBase, IFloorUpdateHandler {
                 ["eventType"] = nameof(LevelEventType.AddDecoration),
                 ["floor"] = i,
                 ["decorationImage"] = image,
+                ["position"] = new List<object> { position.x, position.y },
                 ["relativeTo"] = nameof(DecPlacementType.Tile),
                 ["rotation"] = (rotation - (isCW ? start_angle : exit_angle) + 270) % 360,
                 ["scale"] = new List<object> { scale.x, scale.y },
@@ -79,10 +86,29 @@ public class CustomTileEvent : CustomEventWrapperBase, IFloorUpdateHandler {
     
     [EventField(unit = "°", minFloat = 0, maxFloat = 180)] public float angle { get; set; } = 180;
     [EventField(PropertyType.File, fileType = FileType.Image)] public string image { get; set; } = string.Empty;
+    [EventField("editor.AddDecoration.position", unit = "tiles")] public Vector2 position { get; set; } = Vector2.zero;
     [EventField("editor.AddDecoration.rotation", unit = "°")] public float rotation { get; set; }
     [EventField(unit = "%")] public Vector2 scale { get; set; } = new(100, 100);
     [EventField(PropertyType.Color)] public string color { get; set; } = "ffffffff";
     [EventField("editor.AddDecoration.depth")] public int depth { get; set; } = 1;
     
     [EventField("editor.imageSmoothing")] public bool imageSmoothing { get; set; } = true;
+
+    public override CustomEventBase Copy(LevelEvent evnt) {
+        var c = (CustomTileEvent) base.Copy(evnt);
+        c.angle = angle;
+        c.image = image;
+        c.position = position;
+        c.rotation = rotation;
+        c.scale = scale;
+        c.color = color;
+        c.depth = depth;
+        c.imageSmoothing = imageSmoothing;
+        
+        c.FindEndFloor();
+        c.DeleteDecos();
+        c.GenerateDecos();
+        if (!c.IsCutOrRemoved) editor.UpdateDecorationObjects();
+        return c;
+    }
 }

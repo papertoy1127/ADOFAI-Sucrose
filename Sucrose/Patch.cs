@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ADOFAI;
 using EventLib;
@@ -8,6 +9,7 @@ using Sucrose.CustomTile;
 
 namespace Sucrose; 
 
+[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class Patch {
     [HarmonyPatch(typeof(scnGame), "ApplyEventsToFloors", typeof(List<scrFloor>))]
     public static class FloorIconPatch {

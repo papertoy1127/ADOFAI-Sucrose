@@ -521,6 +521,9 @@
       <EmbeddedResource Include="Resources\CustomTile.png" />
       <EmbeddedResource Include="Resources\MoveCustomTile.png" />
     </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Sucrose-logo.png" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <PropertyGroup>
         <PostBuildEvent>copy "$(TargetPath)" "C:\Program Files (x86)\Steam\steamapps\common\A Dance of Fire and Ice\Mods\Sucrose\Sucrose.dll"</PostBuildEvent>

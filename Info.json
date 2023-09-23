@@ -2,7 +2,7 @@
   "Id": "Sucrose",
   "DisplayName": "Sucrose",
   "Author": "Cywohoy",
-  "Version": "0.1",
+  "Version": "0.2",
   "AssemblyName": "Sucrose.dll",
   "EntryMethod": "Sucrose.Main.Load"
 }

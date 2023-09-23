@@ -15,6 +15,7 @@ public abstract class Main {
     
     internal static Sprite customTileEventIcon;
     internal static Sprite moveCustomTileEventIcon;
+    internal static Texture2D logo;
     
     private static bool Load(UnityModManager.ModEntry mod_entry) {
         entry = mod_entry;
@@ -43,19 +44,32 @@ public abstract class Main {
         texture = new Texture2D(2, 2);
         texture.LoadImage(buffer);
         moveCustomTileEventIcon = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        
+        stream = typeof(Main).Assembly.GetManifestResourceStream("Sucrose.Resources.Sucrose-logo.png")!;
+        buffer = new byte[stream.Length];
+        stream.Read(buffer, 0, buffer.Length);
+        logo = new Texture2D(1274, 288);
+        logo.LoadImage(buffer);
+        
         return true;
     }
 
     public static string test = "";
     private static void OnGUI(UnityModManager.ModEntry mod_entry) {
-        GUILayout.Label("<b><size=24>Sucrose</size></b>");
-        GUILayout.Label("<size=16>v0.1 Alpha</size>");
-        return;
+        GUILayout.Label(logo, GUILayout.Width(319), GUILayout.Height(72));
+        GUILayout.Space(-20);
+        GUILayout.BeginHorizontal();
+        GUILayout.Space(80);
+        GUILayout.Label("<size=24><b>v0.2</b> Alpha</size>");
+        GUILayout.EndHorizontal();
+        GUILayout.Space(10);
+        /*
         test = GUILayout.TextField(test);
         try {
             GUILayout.Label(RDString.Get(test));
         } catch (Exception e) {
             GUILayout.Label(e.ToString());
         }
+        */
     }
 }
